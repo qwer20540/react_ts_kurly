@@ -1,0 +1,118 @@
+$n: 13; //섹션1의 슬라이드 갯수
+$pub_total: 20;
+$pub_view_n: 4;
+$slide_con_width: 1064px;
+$pub_n: $pub_total / $pub_view_n;
+
+#wrap {
+    width:100%;
+    #main {
+        width:100%;z-index: 2;position: relative;
+        padding-bottom:80px;
+        #section1 {
+            width:100%;padding:0 0 40px 0;
+            .slide-container {
+                width:100%;position: relative;
+                cursor: pointer;
+                user-select: none;
+                .slide-view {
+                    width:100%;overflow: hidden;position: relative;z-index: 1;
+                    .slide-wrap {
+                        pointer-events: none;
+                        width: 100% * $n;display:flex;margin-left:-100%;position: relative;left: -100% * 0;
+                        .slide {
+                            width:100%;
+                            img {width:100%;}
+                        }
+                    }
+                }
+                .prev-btn {
+                    display: none;
+                    width: 52px;height: 52px;position: absolute;top:50%;left:17%;z-index: 2;margin-top:-26px;transform: rotate(180deg);
+                    img {width:100%;}
+                }
+                .next-btn {
+                    display: none;
+                    width: 52px;height: 52px;position: absolute;top:50%;right:17%;z-index: 2;margin-top:-26px;
+                    img {width:100%;}
+                }
+                .page-number {
+                    position: absolute;bottom:20px;right:22%;z-index: 2;color: #fff;background: rgba(0,0,0, .3);padding:5px 12px 7px 12px;font-size:14px;border-radius:13px;
+                }
+            }
+        }
+        .section-public {
+            width:100%;padding:40px 0;
+            .container {
+                width:1064px;margin:0 auto;
+                > .gap {
+                    .title {
+                        text-align: center;
+                        padding:0 0 30px 0;
+                        h2 {font-size:28px;color:rgb(51,51,51);font-weight:500;}
+                    }
+                    .content {
+                        width:100%;
+                        .slide-container {
+                            width:100%;position: relative;
+                            .slide-view {
+                                width:100%;position: relative;overflow: hidden;z-index:1;
+                                .slide-wrap {
+                                    position: relative;width:calc( $slide_con_width * $pub_n);display:flex;
+                                    .slide {
+                                        width: $slide_con_width / $pub_view_n; //슬라이드컨테이너너비px / 4 = 266px
+                                        .gap {
+                                            margin:0 7px;
+                                            .img-box {
+                                                width:100%;position: relative;
+                                                > img {width:100%;position: relative;z-index: 1;}
+                                                span {
+                                                    z-index: 2;position: absolute;bottom: 15px;right: 15px;width:45px;height:45px;
+                                                    img {width:100%}
+                                                }
+                                            }
+                                            .caption-box {
+                                                padding:14px 0 0 0;
+                                                h3 {font-size:16px;font-weight: 400;color:#333;line-height:130%;}
+                                                h4 {
+                                                    font-size:16px;font-weight: 600;padding:10px 0;
+                                                    strong {color:rgb(250,98,47);margin:0 10px 0 0;}
+                                                    em {color:rgb(51,51,51);}
+                                                }
+                                                h5 {
+                                                    font-size: 14px;
+                                                    s {color:rgb(181,181,181);}
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .arrow-btn {
+                                position: absolute;top:33%;width:60px;height:60px;z-index:2;
+                                &.prev-btn {left:-30px;}
+                                &.next-btn {right:-30px;transform: rotate(180deg);}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        #section3 {
+            width:100%;padding: 40px 0;
+            .container {
+                width:1064px;margin:0 auto;
+                .gap {
+                    margin:0 7px;
+                    .content {
+                        width:100%;
+                        a {
+                            width:100%;display:block;
+                            img {width:100%;}
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,55 @@
+#wrap {
+  width: 100%;
+  position: relative;
+}
+#wrap #mainModal {
+  z-index: 5;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 440px;
+  height: 645.5px;
+  margin-left: -220px;
+  margin-top: -322.75px;
+  background: rgba(0, 0, 0, 0);
+}
+#wrap #mainModal .wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+#wrap #mainModal .wrap .container {
+  width: 440px;
+  height: 645.5px;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.08);
+}
+#wrap #mainModal .wrap .container .img-box {
+  width: 100%;
+}
+#wrap #mainModal .wrap .container .img-box a {
+  display: block;
+  width: 100%;
+}
+#wrap #mainModal .wrap .container .img-box a img {
+  width: 100%;
+}
+#wrap #mainModal .wrap .container .button-box {
+  width: 100%;
+  height: 60px;
+  border-top: 1px solid #fff;
+  display: flex;
+}
+#wrap #mainModal .wrap .container .button-box button {
+  width: 50%;
+  height: 100%;
+  background: #fff;
+  color: #333;
+  font-weight: 600;
+  font-size: 15px;
+  border: 0;
+  cursor: pointer;
+}

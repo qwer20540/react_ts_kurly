@@ -3,7 +3,7 @@ import React from 'react';
 export default function ConfirmModalComponent({msg, isConfirmModalCloseFn}){
     
     const onClickClose=(e)=>{
-        e.preventDefault();
+        e.preventDefault();       
         isConfirmModalCloseFn(); // 컨펌모달 닫기 함수호출 실행
     }
     

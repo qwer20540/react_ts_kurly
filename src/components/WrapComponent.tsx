@@ -11,8 +11,8 @@ import QuickMenuComponent from './QuickMenuComponent';
 import GoTopComponent from './GoTopComponent';
 import axios from 'axios';
 
-// 서브페이지 메인1 타입스크립트 선언과 설정
-// 타입스크립트 객체이름과 속성 === 디폴트props 객체이름과 속성 같이 설정
+
+// AXIOS
 interface ProductType {
     신상품: {
         상품코드 : string; 
@@ -29,10 +29,10 @@ interface ProductType {
 }
 
 
-function WrapComponent(props: any) {
-    // 사브페이지 메인1 신상품 상태관리
-    const [state, setState]   = React.useState<ProductType>(props.제품);          
 
+function WrapComponent(props: any) {
+    
+    const [state, setState] = React.useState<ProductType>(props.서브1메인);
     const [isTopModal, setIsTopModal]   = React.useState(true);             // 탑모달
     const [isMainModal, setIsMainModal] = React.useState(true);             // 메인 모달
     const [isIntroMain, setIsIntroMain] = React.useState(true);            // 인트로 메인
@@ -40,34 +40,22 @@ function WrapComponent(props: any) {
     const [isMemberSignUp, setIsMemberSignUp]   = React.useState(false);    // 회원가입폼
     const [isMemberSignIn, setIsMemberSignIn]   = React.useState(false);     // 로그인
 
-    // 서브페이지 메인1 신상품 비동기식 axios
+
     React.useEffect(()=>{ // 함수에 아규먼트 전달해서 두개의 스크립트 생성 실행
-        
         axios({
             url:'./data/product.json',
             method:'GET'
         })
         .then((res: any)=>{           
-            
-
-            setState({신상품: res.data.신상품})
-            // console.log( 'state' , state)
-            // console.log( 'res.data' , res.data)
-            // console.log( 'state.신상품' , state.신상품)
-            // console.log( 'res' , res.data.신상품)
-            // setState(res.data.신상품);  // 데이터를 가져와서 상태변수에 저장한다.
-
-            // res.data.신상품.map((item: any, idx: any)=>{
-            //     return console.log(idx,  item.상품코드, item.상품이미지, item.판매처 )
-            // });
-            
+            setState({신상품: res.data.신상품});
         })
         .catch((err: any)=>{
             console.log(`AXIOS 실패 ${err}`);
         });
 
 
-    },[]);
+    },[state.신상품]);
+
 
 
     // 탑모달을 변경하는 함수 => 닫기버튼 클릭해서 호출 실행
@@ -226,18 +214,19 @@ export default WrapComponent;
 
 WrapComponent.defaultProps = {
     $path: './',
-    제품: {
+    서브1메인: {
         신상품: {
-            상품코드 : '',
-            상품이미지 : '',
-            카트이미지 : '',
-            배송구분 : '',
-            제조사 : '',
-            상품명 : '',
+            상품코드 : 'kurly-new-0001',
+            상품이미지 : '0cc94486-78df-4089-a402-357b5d378be3.jpg',
+            카트이미지 : 'cart_purple.svg',
+            배송구분 : '샛별배송',
+            제조사 : '만선',
+            상품명 : '홍가리비 500g (생물)',
             할인율 : 0,
-            정가 : 0,   
-            상품정보 : '',
+            정가 : 11100,   
+            상품정보 : '모두가 좋아하는 주전부리',
             판매처 : ''
         }
     }
 }
+

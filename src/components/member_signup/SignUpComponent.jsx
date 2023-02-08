@@ -57,7 +57,6 @@ export default function SignUpComponent({회원, isConfirmModalFn, isTimer}){
 
             axios({ // CORS API
                 url:'http://moonjong.dothome.co.kr/react_cra_5/member_select.php',
-                // url:'http://wognsko94.dothome.co.kr/react_cra5/member_select.php',
                 method:'GET'
             })
             .then((res)=>{
@@ -321,9 +320,11 @@ export default function SignUpComponent({회원, isConfirmModalFn, isTimer}){
     // 10. 인증번호 입력상자
     const onChangeInputHpOk=(e)=>{
         const {value} = e.target;
-        if(value.length > 1){
-            clearInterval(state.setId);
+
+        if( value.length >= 1 ){
+            clearInterval( state.setId );
         }
+
         setState({
             ...state,
             인증번호입력상자: value
@@ -407,83 +408,106 @@ export default function SignUpComponent({회원, isConfirmModalFn, isTimer}){
 
         }, 1000);
     }
-    React.useEffect(()=>{        
+    React.useEffect(()=>{    
         //console.log( 회원 ); //프롭스 속성중  회원 객체 가져오기
         isTimer && hpTimerCount(); //isTimer 변수가 true이면 실행 
-    }, [ isTimer ]);
+    }, [isTimer]);  //isTimer 가 변경되면 실행 
 
-    // 14. 주소검색
-    const AddressSearchFn=()=>{
+
+
+
+
+
+
+    // 14. 카카오 주소검색 API 
+    const addressSearchFn=()=>{
         const _fileName = './popup.html';
         const _winName = '_address_api';
         const _width = 530;
         const _height = 569;
-        const _top =  (window.innerHeight-_height)/2; 
-        const _left = (window.innerWidth-_width)/2;                 
-        const childWin = window.open( _fileName , _winName ,`width=${_width},height=${_height},top=${_top},left=${_left}`); 
+        const _top =  (window.innerHeight-_height)/2;
+        const _left = (window.innerWidth-_width)/2;
+        const childWin = window.open( _fileName , _winName ,`width=${_width},height=${_height},top=${_top},left=${_left}`);
     }
 
+
+    //     주소검색 버튼 클릭 이벤트    
     const onClickAddressSearchBtn=(e)=>{
         e.preventDefault();
-        AddressSearchFn();              
+         // 팝업창 띄우기(열기)
+         addressSearchFn();
     }
 
     // 15. 주소1 입력상자 온체인지 이벤트
-    const onChangeInputAddr1=(e)=>{
+    const  onChangeInputAddr1=(e)=>{
         setState({
             ...state,
             주소1: e.target.value
         })
     }
+
     // 16. 주소2 입력상자 온체인지 이벤트
-    const onChangeInputAddr2=(e)=>{
+    const  onChangeInputAddr2=(e)=>{
         setState({
             ...state,
             주소2: e.target.value
         })
     }
-    // 17. 로딩시 섹션 스토레이지에 
-    // kurly_search_address 키가 있다면 키값을 가져와서 주소1, 주소2에 데이터 저장하고 유지
-    const addressState=()=>{
-        let 주소1 = '';
-        let 주소2 = '';
-        let isAddrHide = false;
-        let isAddrApiBtn = false;
 
-        if(sessionStorage.getItem('kurly_search_address') !== null ){
-            isAddrHide = true;
-            isAddrApiBtn = true;
+    // 17. 로딩시 세션 스토레이지에 
+    //     kurly_search_address 키가 있다면
+    //     키값을 가져와서 주소1, 주소2에 데이터 저장하고 유지한다.
+    //     addressState
+    const addressState=()=>{
+        let 주소1 ='';
+        let 주소2 ='';
+        let isAddrApiBtn = false;
+        let isAddrHide = false;
+
+        if( sessionStorage.getItem('kurly_search_address') !== null ){            
             주소1 = JSON.parse(sessionStorage.getItem('kurly_search_address')).주소1;
             주소2 = JSON.parse(sessionStorage.getItem('kurly_search_address')).주소2;
+            isAddrApiBtn = true;
+            isAddrHide  = true;
         }
         else {
-            isAddrHide = false;
+            주소1 = '';
+            주소2 = '';
             isAddrApiBtn = false;
+            isAddrHide  = false;
         }
 
         setState({
             ...state,
-            주소1: 주소1, 
+            주소1: 주소1,
             주소2: 주소2,
-            isAddrHide: isAddrHide,
-            isAddrApiBtn, isAddrApiBtn
+            isAddrApiBtn: isAddrApiBtn,
+            isAddrHide: isAddrHide
         })
+
     }
-    // 18. 주소 재검색
+    // 18. 재검색 버튼 클릭 이벤트
     const onClickAddrReBtn=(e)=>{
         e.preventDefault();
-        AddressSearchFn(); 
+        addressSearchFn();
     }
 
-    
-    // 19. 성별 선택 
+    React.useEffect(()=>{
+        addressState();
+    },[]);
+   
+
+
+
+
+    // 19. 성별
     const onChangeGender=(e)=>{
-        let 성별 = '';
+       let 성별 = '';
 
         if(e.target.checked){
             성별 = e.target.value
         }
-        else {
+        else{
             성별 = e.target.value
         }
 
@@ -494,102 +518,242 @@ export default function SignUpComponent({회원, isConfirmModalFn, isTimer}){
     }
 
 
+
+
+
+
     // 20. 생년월일
-    const birthCheck=()=>{  
+    const birthCheck=()=>{  // 매개변수(파라미터 Parameter)
+
         const newYear = new Date().getFullYear(); // 현재년도  숫자
         const newMonth = new Date().getMonth();
         const newDate = new Date().getDate();
         const regExp1 = /[^\d]/g;
         const regExp2 = /^(?:0?[1-9]|1[0-2])$/g;  // 생월 01 ~ 09 또는 1 ~ 9 | 10 11 12
         const regExp3 = /^(?:0?[1-9]|1[0-9]|2[0-9]|3[0-1])$/g;  // 생월 01 ~ 09 또는 1 ~ 9 | 10 ~ 19 | 20~29| 30-31
-        
         let isBirth = false;
-        let istext = '';
+        let text = '';
 
-        if(  Number(state.생년) > newYear){  
-            isBirth = true;
-            istext = '생년월일이 미래로 입력 되었습니다.';
+        // 1. 생년, 생월, 생일 모두 빈칸이면 => 빈칸으로 오류 메시지 없음.
+        // 2. 미래년도 입력 불가 : * 입력상자의 입력값은 숫자(Number)를 입력해도 문자열(String)로 변환된다.
+        // 3. 미래년도 입력 불가 숫자 >  Number(문자) 숫자로 변환하고 비교 가능
+
+        if( state.생년==='' &&  state.생월==='' && state.생일==='' ){
+            isBirth = false;
+            text = '';
         }
-        // 100세 초과 입력 불가
-        else if( Number(state.생년) < newYear-100  ){ 
-            isBirth = true;
-            istext = '생년월일을 다시 확인해주세요.';                  
-        }
-        // 14세 미만 입력 불가            
-        else if( Number(state.생년) >= newYear-14  ){  
-            isBirth = true;
-            istext = '만 14세 미만은 가입이 불가합니다.';  
-        }
-        else{
-            if( regExp2.test(state.생월)===false){
+        else {
+
+            if( Number(state.생년) > newYear){  // 입력값 > 현재년도
                 isBirth = true;
-                istext = '태어난 월을 정확하게 입력해주세요.'; 
+                text = '생년월일이 미래로 입력 되었습니다.';
             }
-            else {
-                if(regExp3.test(state.생일)===false) {
+            // 100세 초과 입력 불가
+            else if( Number(state.생년) < newYear-100  ){  // 1919 < 2020-100 = 1920                    
+                isBirth = true;
+                text = '생년월일을 다시 확인해주세요.';
+            }
+            // 14세 미만 입력 불가            
+            else if( Number(state.생년) >= newYear-14  ){  // ? < 2020-14 = 2008
+                isBirth = true;
+                text = '만 14세 미만은 가입이 불가합니다.';
+            }
+            else{
+                // 생년이 이상 없는 경우
+                // 생월 체크
+                if( regExp2.test(state.생월)===false){
                     isBirth = true;
-                    istext = '태어난 일을 정확하게 입력해주세요.'; 
+                    text = '태어난 월을 정확하게 입력해주세요.';
                 }
-                else{
-                    isBirth = false;
-                    istext = '';
+                else {
+                    // 생월이 이상 없으면
+                    // 생일 체크
+                    if(regExp3.test(state.생일)===false) {
+                        isBirth = true;
+                        text = '태어난 일을 정확하게 입력해주세요.';
+                    }
+                    else{
+                        isBirth = false;
+                        text = '';
+                    }
                 }
             }
+
         }
+
         setState({
             ...state,
             isBirth: isBirth,
-            istext: istext
+            text: text
         })
     }
 
-    // 생년
+    React.useEffect(()=>{
+        birthCheck();
+    },[state.생년, state.생월, state.생일]);
+
+
+
+
+
+    // 20-1. 생년 숫자가 아니면 삭제
     const onChangeYear=(e)=>{
         const regExp1 = /[^\d]/g;
         let 생년 = '';
-
-        생년 = e.target.value.replace(regExp1, '');
+        생년 = e.target.value.replace(regExp1,'');
 
         setState({
             ...state,
             생년: 생년
         })
-        birthCheck(); 
     }
 
-    // 생월
+
+    // 20-2 생월
     const onChangeMonth=(e)=>{
         const regExp1 = /[^\d]/g;
         let 생월 = '';
-
-        생월 = e.target.value.replace(regExp1, '');
+        생월 = e.target.value.replace(regExp1,'');
 
         setState({
             ...state,
             생월: 생월
         })
-        birthCheck();
+
     }
 
-    // 생일
+    // 20-3 생일
     const onChangeDate=(e)=>{
         const regExp1 = /[^\d]/g;
         let 생일 = '';
-
-        생일 = e.target.value.replace(regExp1, '');
+        생일 = e.target.value.replace(regExp1,'');
 
         setState({
             ...state,
             생일: 생일
         })
-        birthCheck();
+
     }
 
 
-    React.useEffect(()=>{
-        addressState();
-    },[]);
-    
+    // 21. 추가 입력사항
+    // 21-1 라디오버튼 이벤트
+    const onChangeAddInput=(e)=>{
+        const {value} = e.target;
+        let isAddInput = false;
+        let addInputtxt1 = '';
+        let addInputtxt2 = '';
+
+
+        isAddInput = true;
+        addInputtxt1 = value;
+        
+        if( value==='친구초대 추천인 아이디' ){
+            addInputtxt2='가입 후 7일 내 첫 주문 배송완료 시, 친구초대 이벤트 적립금이 지급됩니다.';
+        }
+        else{
+            addInputtxt2='추천인 아이디와 참여 이벤트명 중 하나만 선택 가능합니다.<br>가입 이후는 수정이 불가능 합니다.<br>대소문자 및 띄어쓰기에 유의해주세요.';
+        }  
+        
+        setState({
+            ...state,
+            isAddInput: isAddInput,
+            addInputtxt1: addInputtxt1,  // 라디오버튼 value
+            addInputtxt2: addInputtxt2, // msg 2개
+            추가입력사항: value,
+        })
+
+    }
+
+    // 21-2 입력상자 이벤트
+    const onChangeAddInputBox=(e)=>{
+        const {value} = e.target
+        setState({
+            ...state,
+            추가입력사항입력상자: value
+        })
+    }
+
+
+
+    // 22. 이용약관
+    // 22-1. 이용약관동의 전체체크
+    const onChangeServiceAllCheck=(e)=>{
+        const {value, checked} = e.target;
+        let 이용약관동의 = [];
+
+        if( checked === true){ // 체크되면
+            이용약관동의 = state.이용약관내용;
+        }
+        else{
+            이용약관동의 = [];
+        }
+
+        setState({
+            ...state,
+            이용약관동의: 이용약관동의
+        })
+    }
+
+    // 22-2 이용약관동의 체크박스 개별체크
+    const onChangeServiceCheck=(e)=>{
+        const {value, checked} = e.target;
+        let imsi = '';
+        if( checked === true){ // 체크되면 저장
+
+            // 무표배송 체크하면 (SNS, 이메일) 상태변수 저장
+            if( value==='무료배송, 할인쿠폰 등 혜택/정보 수신 동의(선택)'){
+                // SNS, 이메일 모두 이용약관동의에 없다면 저장한다.
+                if( state.이용약관동의.includes('SNS')===false &&  state.이용약관동의.includes('이메일')===false ){
+                    setState({...state, 이용약관동의: [...state.이용약관동의, value, 'SNS', '이메일']});
+                }                
+                else if( state.이용약관동의.includes('SNS')===true &&  state.이용약관동의.includes('이메일')===false ){
+                    setState({...state, 이용약관동의: [...state.이용약관동의, value, '이메일']});
+                }
+                else if( state.이용약관동의.includes('SNS')===false &&  state.이용약관동의.includes('이메일')===true ){
+                    setState({...state, 이용약관동의: [...state.이용약관동의, value, 'SNS']});
+                }
+                else if(state.이용약관동의.includes('SNS')===true &&  state.이용약관동의.includes('이메일')===true){
+                    setState({...state, 이용약관동의: [...state.이용약관동의, value ]});
+                }
+            }    
+            else {
+                // 그외
+                setState({...state,이용약관동의: [...state.이용약관동의, value]});
+            }
+
+           
+        }
+        else{   // 체크해제는 삭제 filter()  재배열 저장
+
+            if( value==='무료배송, 할인쿠폰 등 혜택/정보 수신 동의(선택)'){
+                // 무료배송, 할인쿠폰 등 혜택/정보 수신 동의(선택) 제거
+                // SNS 제거
+                // 이메일 제거
+                imsi = state.이용약관동의.filter((item)=>item!=='무료배송, 할인쿠폰 등 혜택/정보 수신 동의(선택)');
+                imsi = imsi.filter((item)=>item!=='SNS');
+                imsi = imsi.filter((item)=>item!=='이메일');
+                setState({...state, 이용약관동의: imsi});
+            }
+            else if( value==='SNS' ){  // SNS나 이메일 둘중 하나만 해제되면 무료배송 무조건 삭제
+                imsi = state.이용약관동의.filter((item)=>item!=='무료배송, 할인쿠폰 등 혜택/정보 수신 동의(선택)');                   
+                imsi = state.이용약관동의.filter((item)=>item!=='SNS');                   
+                setState({...state, 이용약관동의: imsi});
+            }
+            else if( value==='이메일' ){  // SNS나 이메일 둘중 하나만 해제되면 무료배송 무조건 삭제
+                imsi = state.이용약관동의.filter((item)=>item!=='무료배송, 할인쿠폰 등 혜택/정보 수신 동의(선택)');                   
+                imsi = state.이용약관동의.filter((item)=>item!=='이메일');                   
+                setState({...state, 이용약관동의: imsi});
+            }
+            else {
+                imsi = state.이용약관동의.filter((item)=>item!==value);
+                setState({...state, 이용약관동의: imsi});
+            }
+
+          
+        }
+
+    }
 
     return(
         <main id='main'>
@@ -802,32 +966,36 @@ export default function SignUpComponent({회원, isConfirmModalFn, isTimer}){
                                     <div className="right">
                                         <div className="right-wrap">
                                             <input 
-                                            type="text"
-                                            className={`addr-hide${state.isAddrHide ? ' on' : ''} `} 
+                                            type="text" 
+                                            className={`addr-hide${state.isAddrHide ? ' on':''}`} 
                                             name='input_addr1' 
                                             id='inputAddr1' 
                                             placeholder='카카오 주소 검색 API' 
                                             onChange={onChangeInputAddr1}
                                             value={state.주소1}
                                             />
+
                                             <button 
                                             type="button" 
-                                            className={`addr-re-btn addr-hide${state.isAddrHide ? ' on' : ''} `} 
+                                            className={`addr-hide addr-re-btn${state.isAddrHide ? ' on':''}`}
                                             onClick={onClickAddrReBtn}
                                             >
-                                                <img src="./img/sign_up/ico_search.svg" alt="" />재검색
+                                                <img src="./img/sign_up/ico_search.svg" alt="" />
+                                                재검색
                                             </button>
+
                                             <button 
                                             type="button" 
-                                            className={`addr-api-btn${state.isAddrApiBtn ? ' on' : ''} `} 
+                                            className={`addr-api-btn${state.isAddrApiBtn?' on':''}`}
                                             onClick={onClickAddressSearchBtn}
                                             >
-                                                <img src="./img/sign_up/ico_search.svg" alt="" />주소검색
+                                                <img src="./img/sign_up/ico_search.svg" alt="" />
+                                                주소검색
                                             </button>                                        
                                         </div>                                    
                                     </div>
                                 </li>                        
-                                <li className={`addr-hide${state.isAddrHide ? ' on' : ''} `}>
+                                <li className={`addr-hide${state.isAddrHide ? ' on':''}`}>
                                     <div className="left">
                                         <div className="left-wrap">
                                             
@@ -842,11 +1010,11 @@ export default function SignUpComponent({회원, isConfirmModalFn, isTimer}){
                                             placeholder='나머지 주소를 입력해주세요' 
                                             onChange={onChangeInputAddr2}
                                             value={state.주소2}
-                                            />                                        
+                                            />
                                         </div>
                                     </div>
                                 </li>                        
-                                <li className={`addr-hide${state.isAddrHide ? ' on' : ''} `}>
+                                <li className={`addr-hide${state.isAddrHide ? ' on':''}`}>
                                     <div className="left">
                                         <div className="left-wrap">
                                             
@@ -867,9 +1035,9 @@ export default function SignUpComponent({회원, isConfirmModalFn, isTimer}){
                                     </div>
                                     <div className="right">
                                         <div className="right-wrap gender">
-                                            <label htmlFor="male"><input onChange={onChangeGender} type="radio" name='gender' id='male' className='gender-btn' value='남자' checked={state.성별.includes('남자')} />남자</label>                                        
-                                            <label htmlFor="female"><input onChange={onChangeGender} type="radio" name='gender' id='female' className='gender-btn' value='여자' checked={state.성별.includes('여자')} />여자</label>                                        
-                                            <label htmlFor="unselect"><input onChange={onChangeGender} type="radio" name='gender' id='unselect' className='gender-btn' value='선택안함' checked={state.성별.includes('선택안함')} />선택안함</label>                                        
+                                            <label htmlFor="male"><input  onChange={onChangeGender} type="radio" name='gender' id='male' className='gender-btn' value='남자'            checked={state.성별.includes('남자')}     />남자</label>
+                                            <label htmlFor="female"><input  onChange={onChangeGender} type="radio" name='gender' id='female' className='gender-btn' value='여자'        checked={state.성별.includes('여자')}     />여자</label>
+                                            <label htmlFor="unselect"><input  onChange={onChangeGender} type="radio" name='gender' id='unselect' className='gender-btn' value='선택안함' checked={state.성별.includes('선택안함')}  />선택안함</label>
                                         </div>
                                     </div>
                                 </li>     
@@ -884,14 +1052,14 @@ export default function SignUpComponent({회원, isConfirmModalFn, isTimer}){
                                         <div className="right-wrap birth">
                                             <div className="birth-box">
                                                 <ul>
-                                                    <li><input onChange={onChangeYear} value={state.생년} type="text" maxLength='4' name='year' id='year' placeholder='YYYY' /></li>
+                                                    <li><input type="text" onChange={onChangeYear} value={state.생년}  maxLength='4' name='year' id='year' placeholder='YYYY' /></li>
                                                     <li><i>/</i></li>
-                                                    <li><input onChange={onChangeMonth} value={state.생월} type="text" maxLength='2' name='month' id='month' placeholder='MM' /></li>
+                                                    <li><input type="text" onChange={onChangeMonth} value={state.생월} maxLength='2' name='month' id='month' placeholder='MM' /></li>
                                                     <li><i>/</i></li>
-                                                    <li><input onChange={onChangeDate} value={state.생일} type="text" maxLength='2' name='date' id='date'  placeholder='DD' /></li>
+                                                    <li><input type="text" onChange={onChangeDate} value={state.생일} maxLength='2' name='date' id='date'  placeholder='DD' /></li>
                                                 </ul>
                                             </div>
-                                            <p className={`error-message birth-error-message${state.isBirth ? ' on' : ''}`}>{state.istext}</p>
+                                            <p className={`error-message birth-error-message${ state.isBirth ? ' on':''}`}>{state.text}</p>
                                         </div>
                                     </div>
                                 </li>     
@@ -904,21 +1072,27 @@ export default function SignUpComponent({회원, isConfirmModalFn, isTimer}){
                                     </div>
                                     <div className="right">
                                         <div className="right-wrap add-input-box1">
-                                            <label htmlFor="addInput1"><input type="radio" name='addInput' id='addInput1' className='add-input-btn' value='친구초대 추천인 아이디' />친구초대 추천인 아이디</label>
-                                            <label htmlFor="addInput2"><input type="radio" name='addInput' id='addInput2' className='add-input-btn' value='참여 이벤트명' />참여 이벤트명</label>
+                                            <label onChange={onChangeAddInput} htmlFor="addInput1"><input type="radio" name='addInput' id='addInput1' className='add-input-btn' value='친구초대 추천인 아이디' />친구초대 추천인 아이디</label>
+                                            <label onChange={onChangeAddInput} htmlFor="addInput2"><input type="radio" name='addInput' id='addInput2' className='add-input-btn' value='참여 이벤트명' />참여 이벤트명</label>
                                         </div>
                                     </div>
                                 </li>     
-                                <li className='add-input-box-list'>
+                                <li className={`add-input-box-list${state.isAddInput?' on':''}`}>
                                     <div className="left">
                                         <div className="left-wrap">
                                         
                                         </div>                                
                                     </div>
                                     <div className="right">
-                                        <div className="right-wrap add-input-box2">
-                                        <input type="text" name='add-input-text' id='add-input-text' placeholder='추천인 아이디를 입력해 주세요.' />                                             
-                                        <p className='add-input-guid-text'>가입 후 7일 내 첫 주문 배송완료 시, 친구초대 이벤트 적립금이 지급됩니다.</p>
+                                        <div className={`right-wrap add-input-box2${state.isAddInput?' on':''}`}>
+                                        <input 
+                                        type="text" 
+                                        name='add-input-text' 
+                                        id='add-input-text' 
+                                        placeholder={state.addInputtxt1} 
+                                        onChange={onChangeAddInputBox}
+                                        />
+                                        <p className='add-input-guid-text'>{state.addInputtxt2}</p>
                                         </div>
                                     </div>
                                 </li>     
@@ -938,35 +1112,36 @@ export default function SignUpComponent({회원, isConfirmModalFn, isTimer}){
                                         <div className="right-wrap service">
                                             <ul>
                                                 <li>
-                                                    <label htmlFor="allChk"><input type="checkbox" name='all_chk' id='allChk' value='' />전체 동의합니다.</label>
+                                                    <label htmlFor="allChk"><input onChange={onChangeServiceAllCheck}  checked={state.이용약관동의.length===7}  type="checkbox" name='all_chk' id='allChk' value='' />전체 동의합니다.</label>
+                                                    {/* <label htmlFor="allChk"><input onChange={onChangeServiceAllCheck}  checked={state.이용약관동의.length===7 ? true : false}  type="checkbox" name='all_chk' id='allChk' value='' />전체 동의합니다.</label> */}
                                                     <p>선택항목에 동의하지 않은 경우도 회원가입 및 일반적인 서비스를 이용할 수 있습니다.</p>
                                                 </li>
                                                 <li>
-                                                    <label htmlFor="chk1"><input type="checkbox" name='chk1' id='chk1'  className='chk-btn'  value='이용약관 동의(필수)' />이용약관 동의</label>(필수)
+                                                    <label htmlFor="chk1"><input onChange={onChangeServiceCheck} checked={state.이용약관동의.includes('이용약관 동의(필수)')} type="checkbox" name='chk1' id='chk1'  className='chk-btn'  value='이용약관 동의(필수)' />이용약관 동의</label>(필수)
                                                     <button><span>약관보기</span><img src="./img/sign_up/arrow_right.svg" alt="" /></button>
                                                 </li>
                                                 <li>
-                                                    <label htmlFor="chk2"><input type="checkbox" name='chk2' id='chk2'  className='chk-btn'  value='개인정보 수집∙이용 동의(필수)' />개인정보 수집∙이용 동의</label>(필수)
+                                                    <label htmlFor="chk2"><input  onChange={onChangeServiceCheck} checked={state.이용약관동의.includes('개인정보 수집∙이용 동의(필수)')} type="checkbox" name='chk2' id='chk2'  className='chk-btn'  value='개인정보 수집∙이용 동의(필수)' />개인정보 수집∙이용 동의</label>(필수)
                                                     <button><span>약관보기</span><img src="./img/sign_up/arrow_right.svg" alt="" /></button>
                                                 </li>
                                                 <li>
-                                                    <label htmlFor="chk3"><input type="checkbox" name='chk3' id='chk3'  className='chk-btn'  value='개인정보 수집∙이용 동의(선택)' />개인정보 수집∙이용 동의</label>(선택)
+                                                    <label htmlFor="chk3"><input  onChange={onChangeServiceCheck} checked={state.이용약관동의.includes('개인정보 수집∙이용 동의(선택)')} type="checkbox" name='chk3' id='chk3'  className='chk-btn'  value='개인정보 수집∙이용 동의(선택)' />개인정보 수집∙이용 동의</label>(선택)
                                                     <button><span>약관보기</span><img src="./img/sign_up/arrow_right.svg" alt="" /></button>
                                                 </li>
                                                 <li>
-                                                    <label htmlFor="chk4"><input type="checkbox" name='chk4' id='chk4'  className='chk-btn'  value='무료배송, 할인쿠폰 등 혜택/정보 수신 동의(선택)' />무료배송, 할인쿠폰 등 혜택/정보 수신 동의</label>(선택)
+                                                    <label htmlFor="chk4"><input  onChange={onChangeServiceCheck} checked={state.이용약관동의.includes('무료배송, 할인쿠폰 등 혜택/정보 수신 동의(선택)')}  type="checkbox" name='chk4' id='chk4'  className='chk-btn'  value='무료배송, 할인쿠폰 등 혜택/정보 수신 동의(선택)' />무료배송, 할인쿠폰 등 혜택/정보 수신 동의</label>(선택)
                                                     
                                                 </li>
                                                 <li className='sns-email-box'>
-                                                    <label htmlFor="chk5"><input type="checkbox" name='chk5' id='chk5'  className='chk-btn'  value='SNS' />SNS</label>(선택)
-                                                    <label htmlFor="chk6"><input type="checkbox" name='chk6' id='chk6'  className='chk-btn'  value='이메일' />이메일</label>(선택)
+                                                    <label htmlFor="chk5"><input  onChange={onChangeServiceCheck} checked={state.이용약관동의.includes('SNS')} type="checkbox" name='chk5' id='chk5'  className='chk-btn'  value='SNS' />SNS</label>(선택)
+                                                    <label htmlFor="chk6"><input  onChange={onChangeServiceCheck} checked={state.이용약관동의.includes('이메일')} type="checkbox" name='chk6' id='chk6'  className='chk-btn'  value='이메일' />이메일</label>(선택)
                                                     
                                                 </li>
                                                 <li>
                                                     <p>동의 시 한 달간 [5%적립] + [2만원 이상 무료배송] 첫 주문 후 안내</p>
                                                 </li>
                                                 <li>
-                                                    <label htmlFor="chk7"><input type="checkbox" name='chk7' id='chk7'  className='chk-btn'  value='본인은 만 14세 이상입니다.(필수)' />본인은 만 14세 이상입니다.</label>(필수)
+                                                    <label htmlFor="chk7"><input  onChange={onChangeServiceCheck} checked={state.이용약관동의.includes('본인은 만 14세 이상입니다.(필수)')}  type="checkbox" name='chk7' id='chk7'  className='chk-btn'  value='본인은 만 14세 이상입니다.(필수)' />본인은 만 14세 이상입니다.</label>(필수)
                                                     
                                                 </li>
                                             </ul>
@@ -1023,22 +1198,25 @@ SignUpComponent.propTypes = {
         minute: PropTypes.number, 
         second: PropTypes.number,
 
+
         주소1: PropTypes.string,             // string
         주소2: PropTypes.string,             // string
-        isAddrHide: PropTypes.bool,
-        isAddrApiBtn: PropTypes.bool,
 
         성별: PropTypes.string,                         // string
 
         생년: PropTypes.string,              // number
         생월: PropTypes.string,              // number
         생일: PropTypes.string,              // number
-        isBirth: PropTypes.string,  
-        istext: PropTypes.string,
+        isBirth: PropTypes.bool,
+        text: PropTypes.string,
 
         추가입력사항: PropTypes.string,       // string        
         추가입력사항입력상자: PropTypes.string,       // string
+        isAddInput: PropTypes.bool,
+        addInputtxt1: PropTypes.string,
+        addInputtxt2: PropTypes.string,
 
+        이용약관내용: PropTypes.array,
         이용약관동의: PropTypes.array        // 배열 array
     })
 }
@@ -1082,20 +1260,33 @@ SignUpComponent.defaultProps = {
 
         주소1 : '',             // string
         주소2 : '',             // string
-        isAddrHide: false,
         isAddrApiBtn: false,
+        isAddrHide: false,
 
-        성별 : '선택안함',              // string
+        성별 : '여자',              // string
 
         생년 : '',              // number
         생월 : '',              // number
         생일 : '',              // number
-        isBirth : '',
-        istext: '',
+        isBirth: false,
+        text: '',
+
 
         추가입력사항 : '',       // string
         추가입력사항입력상자 : '',       // string
+        isAddInput: false,
+        addInputtxt1: '',
+        addInputtxt2: '',
 
+        이용약관내용 : [
+            '이용약관 동의(필수)',
+            '개인정보 수집∙이용 동의(필수)',
+            '개인정보 수집∙이용 동의(선택)',
+            '무료배송, 할인쿠폰 등 혜택/정보 수신 동의(선택)',
+            'SNS',
+            '이메일',
+            '본인은 만 14세 이상입니다.(필수)'
+        ],
         이용약관동의 : []        // 배열 array
     }
 }

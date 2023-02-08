@@ -560,34 +560,40 @@ function SignUpComponent({회원, isConfirmModalFn, isTimer, introMainFn}: any )
         function getPromise(){
             // return new Promise((resolved, rejected)=>{
             // return new Promise((res, err)=>{
-            return new Promise((success: any, error: any)=>{
+            return new Promise((success, error)=>{
                 
                 let 주소1: string ='';
                 let 주소2: string ='';
                 let isAddrApiBtn: boolean = false;
                 let isAddrHide: boolean = false;
         
-                if( `${sessionStorage.getItem('kurly_search_address')}` !== null ){            
-                    주소1 = JSON.parse( `${sessionStorage.getItem('kurly_search_address')}` ).주소1;
-                    주소2 = JSON.parse( `${sessionStorage.getItem('kurly_search_address')}` ).주소2;
-                    isAddrApiBtn = true;
-                    isAddrHide  = true;
+                if( `${sessionStorage.getItem('kurly_search_address')}` !== null ){    
+                    try{
+                        주소1 = JSON.parse( `${sessionStorage.getItem('kurly_search_address')}` ).주소1;
+                        주소2 = JSON.parse( `${sessionStorage.getItem('kurly_search_address')}` ).주소2;
+                        isAddrApiBtn = true;
+                        isAddrHide  = true;
 
-                    // 주소 가져오기 성공 프로토타입 객체 생성 
-                    const Obj = {
-                        주소1: 주소1,
-                        주소2: 주소2,
-                        isAddrApiBtn: isAddrApiBtn,
-                        isAddrHide: isAddrHide,
-                    } 
-                    // resolved(Obj);  // 주소가져오기 성공 리턴
-                    // res(Obj);  // 주소가져오기 성공 리턴
-                    success(Obj);  // 주소가져오기 성공 리턴
+                        // 주소 가져오기 성공 프로토타입 객체 생성 
+                        const Obj = {
+                            주소1: 주소1,
+                            주소2: 주소2,
+                            isAddrApiBtn: isAddrApiBtn,
+                            isAddrHide: isAddrHide,
+                        } 
+                        // resolved(Obj);  // 주소가져오기 성공 리턴
+                        // res(Obj);  // 주소가져오기 성공 리턴
+                        success(Obj);  // 주소가져오기 성공 리턴
+                    }
+                    catch {
+                        error('검색 주소가 없습니다.'); // 주소가져오기 성공 리턴 
+                    }            
+                       
                 }
                 else {
                     // rejected('주소가져오기 실패!'); // 주소가져오기 성공 리턴
                     // err('주소가져오기 실패!'); // 주소가져오기 성공 리턴
-                    error('주소가져오기 실패!'); // 주소가져오기 성공 리턴
+                    error('주소가져오기 없습니다!'); // 주소가져오기 성공 리턴
                 }
 
             });

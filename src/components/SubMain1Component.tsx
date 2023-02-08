@@ -1,13 +1,9 @@
 import React from 'react';
 
 
-// 부모컴포넌트에서  WrapComponent에서
-// 1. 타입스크립트 설정하고
-// 2. 상태관리에 등록하고
-// 3. 프롭스로 내려받는다,
-// 4. json데이터를 axios로 가져오기
-function SubMain1Component({신상품}: any){
 
+function SubMain1Component({신상품}: any){
+    
     // 서브 메인1이 로딩시 실행 =>  React.useEffect(); 훅(Hook) 사용
     // 제이쿼리 구현 되어야 body 요소에 스크립트를 바인딩하여 ajax가  실행되도록한다.
     // <script type="text/babel" src="./js/new_product.js"></script>
@@ -22,8 +18,9 @@ function SubMain1Component({신상품}: any){
     
     // 정규표현식 콤머형식 만들기
     // 반드시 숫자를 스트링(문자열)로 변환해서 사용 : 형변환 
-    const commaRegExp=(z: any)=>{
+    const commaRegExp=(z:any)=>{
         let str: string = z.toString();
+        // let str: string = z.toString();
         const regExp = /(^\d+)(\d{3})/;
         while( regExp.test(str) ){
             str = str.replace(regExp, '$1,$2');
@@ -36,6 +33,7 @@ function SubMain1Component({신상품}: any){
         createScriptFn("./js/category.js"); // 아규먼트(전달인자)
         // createScriptFn("./js/new_product.js");
         // axios({}).then(성공메시지콜백함수).catch(실패메시지함수);
+        // console.log('여기는 신상품 서브페이지 : ', 신상품 );
     },[]);
 
 
@@ -199,10 +197,9 @@ function SubMain1Component({신상품}: any){
                                 </div>
                                 <ul id='newProduct'>
                                   
-                                    {/* 하위컴포넌트 생성 구현 */}
-                                    {
-
-                                        신상품.map((item: any,idx: any)=>{
+                                   {
+                                        신상품.map((item: any,idx: number)=>{
+                        
                                             return(
                                                 <li key={idx}>
                                                     <div className="col-gap">
@@ -223,7 +220,7 @@ function SubMain1Component({신상품}: any){
                                                                     {
                                                                         item.할인율 > 0 && <h3><s>{commaRegExp(item.정가)}</s></h3>
                                                                     }
-
+                        
                                                                 <h5>{item.상품정보}</h5>
                                                                 <h4>{item.판매처}</h4>
                                                             </div>
@@ -232,8 +229,7 @@ function SubMain1Component({신상품}: any){
                                                 </li>
                                             )    
                                         })
-
-                                    }
+                                   }
                                         
                                 </ul>
                             </div>
@@ -245,6 +241,4 @@ function SubMain1Component({신상품}: any){
     )
 }
 export default SubMain1Component;
-
-
 
